@@ -7,12 +7,12 @@ import { GetfireService } from '../../services/getfire.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  private sections = [];
-  private myCourses = [];
-  private myTimes = [];
-  private shortDays = ['S', 'M', 'T', 'W', 'R', 'F', 'A'];
-  private longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  private times = [ '08:00 am',
+  sections = [];
+  myCourses = [];
+  myTimes = [];
+  shortDays = ['S', 'M', 'T', 'W', 'R', 'F', 'A'];
+  longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  times = [ '08:00 am',
                     '09:25 am',
                     '10:50 am',
                     '12:15 pm',
@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
                     '03:05 pm',
                     '04:30 pm',
                     '06:00 pm'];
-  private oldtimes = [ '08:00 am-9:15 am',
+  oldtimes = [ '08:00 am-9:15 am',
                     '09:25 am-10:40 am',
                     '10:50 am-12:05 pm',
                     '12:15 pm-1:30 pm',
@@ -97,7 +97,7 @@ export class HomeComponent implements OnInit {
         k++;
         if (k === docs.length) {
           if (document.getElementById('courseSearch') === document.activeElement
-                || document.activeElement.parentNode === document.getElementById('searchPreview')) {
+                || (<HTMLElement>document.activeElement).parentNode === document.getElementById('searchPreview')) {
             this.sections = newSec;
           }
         }
@@ -107,7 +107,7 @@ export class HomeComponent implements OnInit {
 
   @HostListener('document:mousedown', ['$event'])
   public documentClick(event: Event): void {
-    if (event.target !== document.getElementById('courseSearch') && event.target.parentNode !== document.getElementById('searchPreview')) {
+  if (event.target !== document.getElementById('courseSearch') && (<HTMLElement>event.target).parentNode !== document.getElementById('searchPreview')) {
       this.sections = []
     }
   }

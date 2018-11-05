@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-const firebase = require('firebase');
+// const firebase = require('firebase');
+import * as firebase from 'firebase';
 
 @Injectable({
   providedIn: 'root'
