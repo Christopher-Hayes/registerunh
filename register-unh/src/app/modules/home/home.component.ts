@@ -7,7 +7,9 @@ import { GetfireService } from '../../services/getfire.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  sections = [];
+  searchVisible = true;
+  crseHighlight = null;
+  sections: any[] = [];
   myCourses = [];
   myTimes = [];
   shortDays = ['S', 'M', 'T', 'W', 'R', 'F', 'A'];
@@ -34,6 +36,8 @@ export class HomeComponent implements OnInit {
   ngOnInit() { }
 
   filterSec(time) {
+    console.log('[home component] filterSec() time=', time);
+
     const weekCrse = [[], [], [], [], [], [], []];
     for (let d = 0; d < this.shortDays.length; d++) {
       for (const c of this.myCourses) {
@@ -45,7 +49,36 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  stopHighlight() {
+    this.crseHighlight = null;
+  }
+
+  toggleSearch() {
+    console.log('[home component] toggleSearch()');
+
+    this.searchVisible = !this.searchVisible;
+    if (this.searchVisible) {
+      // Reset text
+      (<HTMLInputElement>document.getElementById('courseSearch')).value = '';
+      // Styling
+      document.getElementById('courseSearch').classList.remove('hidden');
+      // Cursor focus
+      this.focusSearch();
+    } else {
+      document.getElementById('courseSearch').classList.add('hidden');
+      this.removePreviews();
+    }
+  }
+  focusSearch() {
+    console.log('[home component] focusSearch()');
+
+    document.getElementById('courseSearch').focus();
+    (<HTMLInputElement>document.getElementById('courseSearch')).select();
+  }
+
   addClass(sec) {
+    console.log('[home component] addClass() sec=', sec);
+
     for (const c of this.myCourses) {
       if (c.crn === sec.crn) {
         return;
@@ -61,6 +94,10 @@ export class HomeComponent implements OnInit {
   }
 
   updatePreview() {
+    console.log('[home component] updatePreview()');
+
+    this.removePreviews();
+
     const args = (<HTMLInputElement>document.getElementById('courseSearch')).value.toUpperCase().trim().split(' ');
     if (args.length < 2) {
       return;
@@ -90,9 +127,14 @@ export class HomeComponent implements OnInit {
             instructor: dx['instructor='],
             plocation: dx['location='],
             time: dx['time='],
-            starttime: dx['time='].substr(0, dx['time='].indexOf('-'))
+            starttime: dx['time='].substr(0, dx['time='].indexOf('-')),
+            preview: false
           };
           newSec.push(secObj);
+          // Preview section
+          const previewSec = {secObj}.secObj;
+          previewSec.preview = true;
+          this.addClass(previewSec);
         }
         k++;
         if (k === docs.length) {
@@ -105,11 +147,34 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  removePreviews() {
+    // Remove previews
+    for (const p of this.myCourses) {
+      if ((<any>p).preview) {
+        console.log('REMOVE: ', p.title, p.sec);
+        const t = (<any>p).starttime;
+        this.myCourses.splice(this.myCourses.indexOf(p), 1);
+
+        // Remove preview time if necessary
+        let found = false;
+        for (const c of this.myCourses) {
+          if ((<any>c).starttime === t) {
+            found = true;
+            break;
+          }
+        }
+        // If not found remove from times array
+        if (!found) {
+          this.myTimes.splice(this.myTimes.indexOf(t), 1);
+        }
+      }
+    }
+  }
+
   @HostListener('document:mousedown', ['$event'])
   public documentClick(event: Event): void {
-  if (event.target !== document.getElementById('courseSearch') && (<HTMLElement>event.target).parentNode !== document.getElementById('searchPreview')) {
-      this.sections = []
-    }
+    console.log('[home component] mousedown event catcher');
+    this.crseHighlight = null;
   }
 
 }

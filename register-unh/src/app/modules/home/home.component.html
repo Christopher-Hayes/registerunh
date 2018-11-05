@@ -1,20 +1,8 @@
-<div class="container-fluid searchPreview">
-  <ul class="list-group suggestions" id="searchPreview">
-    <li *ngFor="let sec of this.sections" class="list-group-item d-flex justify-content-between align-items-center list-group-item-action" (mouseup)="addClass(sec)">
-      {{ sec.title }}
-      <span class="badge badge-primary badge-pill">{{ sec.sec }}</span>
-    </li>
-  </ul>
-  <h4>Add Courses</h4>
-  <form class="form-inline my-2 my-lg-0">
-    <input class="form-control mr-sm-2" id="courseSearch" type="search" placeholder="SUBJ CRSE" aria-label="Search" (change)="updatePreview()" (keyup)="updatePreview()">
-    <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add Courses</button> -->
-  </form>
-</div>
-<table class="table table-bordered">
-  <thead>
+<!-- SCHEDULE -->
+<div class="container-fluid" style="width:100vw;min-height:100vh;margin:0;padding:0" (mousemove)="stopHighlight()">
+<table class="container-fluid table table-bordered">
+  <thead class="navbar-light bg-light ">
     <tr>
-      <th scope="col">Time</th>
       <th scope="col">Sunday</th>
       <th scope="col">Monday</th>
       <th scope="col">Tuesday</th>
@@ -26,12 +14,12 @@
   </thead>
   <tbody>
     <tr *ngFor="let t of myTimes">
-      <th scope="row">{{ t }}</th>
+      <!-- <th scope="row">{{ t }}</th> -->
       <td scope="row" *ngFor="let wd of shortDays">
         <div *ngFor="let crse of myCourses">
-          <div class="card" *ngIf="crse.time.includes(t) && crse.days.includes(wd)">
+          <div class="card" *ngIf="crse.time.includes(t) && crse.days.includes(wd)" [ngStyle]="{'opacity':crse.preview && crseHighlight !== crse ? 0.5 : 1.0}" [ngClass]="{'text-white': !crse.preview, 'bg-secondary': !crse.preview, 'border-primary': crseHighlight === crse}" (click)="crse.preview=!crse.preview" (mouseenter)="crseHighlight=crse" (mousemove)="$event.stopPropagation()">
             <div class="card-body">
-              <p class="card-text">{{ crse.title }}</p>
+              <p class="card-text">{{ crse.title }} <span class="badge badge-primary">{{ crse.sec }}</span></p>
               <p class="card-text"><small class="text-muted">{{ crse.crse }}<span style="margin-left:20px"></span>{{ crse.crn }}<span style="margin-left:20px"></span>{{ crse.time }}</small></p>
             </div>
           </div>
@@ -40,3 +28,42 @@
     </tr>
   </tbody>
 </table>
+
+<!-- ADD COURSE -->
+<p>
+  <button class="btn btn-primary searchToggle" type="button" (mouseup)="$event.target.style.transform='rotate(' + (searchVisible?'':'-') + '90deg)';toggleSearch()">
+    +
+  </button>
+</p>
+
+<!-- PREVIEW -->
+<div class="container-fluid searchPreview">
+<!--
+  <ul class="list-group suggestions" id="searchPreview">
+    <li *ngFor="let sec of this.sections" class="list-group-item d-flex justify-content-between align-items-center list-group-item-action" (mouseup)="addClass(sec)">
+      {{ sec.title }}
+      <span class="badge badge-primary badge-pill">{{ sec.sec }}</span>
+    </li>
+  </ul>
+-->
+  <form class="form-inline my-2 my-lg-0" id="collapseSearch">
+    <input class="form-control mr-sm-2" autofocus id="courseSearch" type="search" placeholder="SUBJ CRSE" aria-label="Search" (keyup)="updatePreview()">
+  </form>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary botbar" [ngClass]="{'hidden': crseHighlight === null}">
+  <a class="navbar-brand" href="#" *ngIf="crseHighlight !== null">{{ crseHighlight.title }} <span class="badge badge-secondary">{{ crseHighlight.sec }}</span></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.crn }}<small class="text-muted">CRN</small></li>
+      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.crse }}<small class="text-muted">Course Number</small></li>
+      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.instructor }}<small class="text-muted">Instructor</small></li>
+      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.location0 }}<small class="text-muted">Location</small></li>
+      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.days }}<small class="text-muted">Days</small></li>
+    </ul>
+  </div>
+</nav>
+</div>
