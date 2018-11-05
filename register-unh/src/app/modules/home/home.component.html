@@ -1,0 +1,42 @@
+<div class="container-fluid searchPreview">
+  <ul class="list-group suggestions" id="searchPreview">
+    <li *ngFor="let sec of this.sections" class="list-group-item d-flex justify-content-between align-items-center list-group-item-action" (mouseup)="addClass(sec)">
+      {{ sec.title }}
+      <span class="badge badge-primary badge-pill">{{ sec.sec }}</span>
+    </li>
+  </ul>
+  <h4>Add Courses</h4>
+  <form class="form-inline my-2 my-lg-0">
+    <input class="form-control mr-sm-2" id="courseSearch" type="search" placeholder="SUBJ CRSE" aria-label="Search" (change)="updatePreview()" (keyup)="updatePreview()">
+    <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add Courses</button> -->
+  </form>
+</div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Time</th>
+      <th scope="col">Sunday</th>
+      <th scope="col">Monday</th>
+      <th scope="col">Tuesday</th>
+      <th scope="col">Wednesday</th>
+      <th scope="col">Thursday</th>
+      <th scope="col">Friday</th>
+      <th scope="col">Saturday</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let t of myTimes">
+      <th scope="row">{{ t }}</th>
+      <td scope="row" *ngFor="let wd of shortDays">
+        <div *ngFor="let crse of myCourses">
+          <div class="card" *ngIf="crse.time.includes(t) && crse.days.includes(wd)">
+            <div class="card-body">
+              <p class="card-text">{{ crse.title }}</p>
+              <p class="card-text"><small class="text-muted">{{ crse.crse }}<span style="margin-left:20px"></span>{{ crse.crn }}<span style="margin-left:20px"></span>{{ crse.time }}</small></p>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

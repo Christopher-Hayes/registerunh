@@ -1,0 +1,17 @@
+.searchPreview {
+  width: 100vw;
+  max-width: 500px;
+  background-color: white;
+  margin: 20px 10px;
+}
+.searchPreview .suggestions {
+  position: absolute;
+  display: static;
+  box-shadow: 0 0 20px grey;
+  margin-top: 76px;
+  z-index: 20;
+}
+
+form input {
+  background-color: white;
+}
