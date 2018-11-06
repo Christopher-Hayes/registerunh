@@ -1,8 +1,31 @@
+.time-td {
+  background-color: transparent;
+  color: grey;
+  font-size: 0.7em;
+  min-width: 80px;
+}
+.time-td:after {
+  display: block;
+  position: absolute;
+  content: "";
+  width: 100vw;
+  height: 1px;
+  background-color: #EEE;
+}
 table th {
   text-align: center;
+  border-color: white;
+  border-width: 5px;
+  background-color: #6ca8f3;
+  color: white;
+  font-weight: 100;
 }
 .bg-secondary * {
   color: white !important;
+}
+
+.courseCard {
+  background-color: white;
 }
 
 .searchPreview {
@@ -32,6 +55,7 @@ table th {
   font-size: 2em;
   font-weight: 100;
   box-shadow: 0 0 30px #CCC;
+  z-index: 10;
   transform: rotate(-90deg);
   transition: transform 300ms linear;
 }
@@ -40,14 +64,14 @@ form input {
 }
 #collapseSearch {
   position: fixed;
-  right: 170px;
+  right: 110px;
   bottom: 80px;
 }
 #courseSearch {
   transition: margin 300ms, opacity 300ms;
 }
 #courseSearch.hidden {
-  margin-bottom: -20px;
+  margin-right: -20px !important;
   opacity: 0;
   pointer-events: none;
 }
@@ -55,11 +79,12 @@ form input {
   position: fixed;
   bottom: 0px;
   left: 0px;
+  min-height: 50px;
   width: 100vw;
   transition: bottom 300ms, opacity 300ms;
 }
 .botbar.hidden {
-  bottom: -20px;
+  bottom: -5px;
   opacity: 0;
   pointer-events: none;
 }
