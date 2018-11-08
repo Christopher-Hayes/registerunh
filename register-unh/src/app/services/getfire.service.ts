@@ -46,9 +46,21 @@ export class GetfireService {
       });
   }
 
-  // Get all course data of a certain section
-  getSectionData(crn: string, callback) {
-    console.log('[Getfire Service] getSectionData() crn=', crn);
+  // Get professor data
+  getProf(name, callback) {
+    console.log('[Getfire Service] getProf() name=', name);
 
+    // Create a query against the collection
+    const profRef = this.firestore.collection('professors');
+    const profQuery = profRef.where('full', '==', name).get()
+      .then((snapshot) => {
+        if (!snapshot.empty && snapshot.docs[0].exists) {
+          callback(snapshot.docs[0].data());
+        } else {
+          callback(null);
+        }
+      }).catch(function(error) {
+        console.log('Error getting document:', error);
+      });
   }
 }

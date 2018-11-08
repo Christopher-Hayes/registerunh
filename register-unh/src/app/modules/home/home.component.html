@@ -3,26 +3,35 @@
 <table class="container-fluid table table-borderless">
   <thead class="navbar-light bg-light ">
     <tr>
-      <th scope="col" style="background-color:white"></th>
-      <th scope="col">Sunday</th>
+      <th scope="col"></th>
+      <th scope="col" *ngIf="sun">Sunday</th>
       <th scope="col">Monday</th>
       <th scope="col">Tuesday</th>
       <th scope="col">Wednesday</th>
       <th scope="col">Thursday</th>
       <th scope="col">Friday</th>
-      <th scope="col">Saturday</th>
+      <th scope="col" *ngIf="sat">Saturday</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let t of myTimes">
-      <td scope="row" class="time-td">{{ t }}</td>
+      <td scope="row" class="time-td" [ngClass]="{'highlight': crseHighlight !== null && crseHighlight.starttime === t}">{{ t }}</td>
       <td scope="row" *ngFor="let wd of shortDays">
         <div *ngFor="let crse of myCourses">
-          <div class="card courseCard" *ngIf="crse.time.includes(t) && crse.days.includes(wd)" style="padding:1rem !important" [ngStyle]="{'opacity':crse.preview && crseHighlight !== crse ? 0.5 : 1.0}" [ngClass]="{'text-white': !crse.preview, 'bg-secondary': !crse.preview, 'border-primary': crseHighlight === crse}" (click)="crse.preview=!crse.preview" (mouseenter)="crseHighlight=crse" (mousemove)="$event.stopPropagation()">
-            <div class="card-body" style="padding:0.25rem">
+          <div class="card courseCard" *ngIf="crse.time.includes(t) && crse.days.includes(wd)" style="padding:0rem !important" [ngStyle]="{'opacity':crse.preview && crseHighlight !== crse ? 0.5 : 1.0, 'height': crse.length == '2 hrs 40 min' ? '240px' : 'auto'}" [ngClass]="{'text-white': !crse.preview, 'bg-secondary': !crse.preview, 'border-primary': crseHighlight === crse, 'perm': !crse.preview}" (click)="crse.preview = !crse.preview" (mouseenter)="crseHighlight=crse" (mousemove)="$event.stopPropagation()">
+            <div class="card-body" [ngStyle]="{'padding-top': crse.length == '2 hrs 40 min' ? '60px' : 'auto'}">
+              <!-- <span class="badge badge-primary" style="float:left">{{ crse.sec }}</span> -->
+              <!-- <i class="material-icons" style="float:right" (click)="crse.preview=true;$event.stopPropagation()" >clear</i> -->
+              <!-- 
               <p style="width:auto;font-size:0.5em;overflow:visible;margin-left:-16px;margin-top:-16px;color:#666;">{{ crse.crn }}</p>
-              <div style="float:right;position:absolute;margin-left:63%;margin-top:-15%;"><p style="display:contents;font-size:0.5em;color:#666;margin-top:-30px;margin-right:-16px;">{{ crse.crse }}</p><span class="badge badge-primary" style="float:right;margin-left:6px;margin-top:5px">{{ crse.sec }}</span></div>
-              <p class="card-text" style="font-size:0.8em;">{{ crse.title }}</p>
+              <div style="float:right;position:block;margin-top:-34px;margin-right:12px;"><p style="display:contents;font-size:0.5em;color:#666;margin-top:-30px;margin-right:-16px;">{{ crse.crse }}</p><span class="badge badge-primary" style="float:right;margin-left:6px;margin-top:5px">{{ crse.sec }}</span><i class="material-icons">clear</i></div>
+              -->
+              <p class="card-text" style="font-size:0.8em;">{{ crse.title }}<span class="badge badge-primary">{{ crse.sec }}</span></p>
+              <small class="text-muted">{{ crse.subj }}-{{ crse.crse }}-{{ crse.sec }}</small>
+            </div>
+            <div class="card-footer" (mouseout)="hoverProf=null">
+              <small class="text-muted prof-name" (mouseover)="hoverProf=prof_data.get(crse.instructor)" (mouseenter)="hoverProf=prof_data.get(crse.instructor)">{{ crse.instructorlast }}<span class="badge badge-secondary prof-rating" (mouseover)="hoverProf=prof_data.get(crse.instructor)" [ngClass]="{'badge-success': prof_data.get(crse.instructor).overall_v < 5.1, 'badge-warning': prof_data.get(crse.instructor).overall_v < 3.0, 'badge-danger': prof_data.get(crse.instructor).overall_v < 1.5}">{{ prof_data.get(crse.instructor).overall }}</span></small>
+              <small class="text-muted">{{ crse.length }}</small>
             </div>
           </div>
         </div>
@@ -53,19 +62,35 @@
   </form>
 </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary botbar" [ngClass]="{'hidden': crseHighlight === null}">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary botbar" [ngClass]="{'hidden': crseHighlight === null || hoverProf !== null}">
   <a class="navbar-brand" href="#" *ngIf="crseHighlight !== null">{{ crseHighlight.title }} <span class="badge badge-secondary">{{ crseHighlight.sec }}</span></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
-      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.crn }}<small class="text-muted">CRN</small></li>
-      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.crse }}<small class="text-muted">Course Number</small></li>
-      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.instructor }}<small class="text-muted">Instructor</small></li>
-      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.location0 }}<small class="text-muted">Location</small></li>
-      <li class="nav-item" *ngIf="crseHighlight !== null">{{ crseHighlight.days }}<small class="text-muted">Days</small></li>
+      <li class="nav-item" *ngIf="crseHighlight !== null"><small class="text-muted">CRN</small>{{ crseHighlight.crn }}</li>
+      <li class="nav-item" *ngIf="crseHighlight !== null"><small class="text-muted">Course Number</small>{{ crseHighlight.crse }}</li>
+      <li class="nav-item" *ngIf="crseHighlight !== null"><small class="text-muted">Instructor</small>{{ crseHighlight.instructor }}</li>
+      <li class="nav-item" *ngIf="crseHighlight !== null"><small class="text-muted">Location</small>{{ crseHighlight.location0 }}</li>
+      <li class="nav-item" *ngIf="crseHighlight !== null"><small class="text-muted">Days</small>{{ crseHighlight.days }}</li>
+      <li class="nav-item" *ngIf="crseHighlight !== null"><small class="text-muted">Time</small>{{ crseHighlight.time}}</li>
     </ul>
   </div>
 </nav>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light prof-popup" *ngIf="hoverProf !== null">
+    <div class="container portrait" [ngStyle]="{'background-image': 'url(https://www.newhaven.edu/_resources/images/faculty-staff-headshots/' + hoverProf.first + '-' + hoverProf.last + '.jpg)'}"></div>
+    <h4>{{ hoverProf.first }}</h4>
+    <h1>{{ hoverProf.last }}</h1>
+    <div class="container ratings">
+      <div class="overall alert" [ngClass]="{'alert-success': hoverProf.overall_v < 5.1, 'alert-warning': hoverProf.overall_v < 3.0, 'alert-danger': hoverProf.overall_v < 1.5}">{{ hoverProf.overall }}</div>
+      <div class="difficulty alert" [ngClass]="{'alert-success': hoverProf.overall_v < 5.1, 'alert-warning': hoverProf.overall_v < 3.0, 'alert-danger': hoverProf.overall_v < 1.5}">{{ hoverProf.diff }}</div>
+      <div class="take-again alert" [ngClass]="{'alert-success': hoverProf.overall_v < 5.1, 'alert-warning': hoverProf.overall_v < 3.0, 'alert-danger': hoverProf.overall_v < 1.5}">{{ hoverProf.take_again }}</div>
+    </div>
+    <div class="container tags">
+      <div class="badge badge-secondary prof-tag" *ngFor="let t of hoverProf.tags">
+        {{ t }}
+      </div>
+    </div>
+  </nav>
 </div>

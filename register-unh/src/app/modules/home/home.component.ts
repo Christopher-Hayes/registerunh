@@ -9,10 +9,22 @@ import { GetfireService } from '../../services/getfire.service';
 export class HomeComponent implements OnInit {
   searchVisible = true;
   crseHighlight = null;
+  hoverProf = null;
+
+  // Only show Saturday and Sunday
+  sat = false;
+  sun = false;
   sections: any[] = [];
+
+  // Selected courses (with a unique set of times)
   myCourses = [];
   myTimes = [];
-  shortDays = ['S', 'M', 'T', 'W', 'R', 'F', 'A'];
+
+  // 'cache' professor data
+  prof_name = [];
+  prof_data = new Map();
+
+  shortDays = ['M', 'T', 'W', 'R', 'F']; // Dynamically add Sunday(S),Saturday(A)
   longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   times = [ '08:00 am',
                     '09:25 am',
@@ -86,7 +98,7 @@ export class HomeComponent implements OnInit {
     }
     console.log('add ', sec);
     this.myCourses.push(sec);
-    if (!this.myTimes.includes(sec.starttime)) {
+    if (!this.myTimes.includes(sec.starttime) && sec.starttime !== '') {
       console.log('add time');
       this.myTimes.push(sec.starttime);
       this.myTimes.sort(function (a, b) { return Date.parse('01/01/2013 ' + a) - Date.parse('01/01/2013 ' + b); });
@@ -114,10 +126,18 @@ export class HomeComponent implements OnInit {
       docs.forEach((d) => {
         if (d.exists) {
           const dx = d.data();
+          const time = dx['time='];
+          const starttime = time.substr(0, time.indexOf('-'));
+          const endtime = time.substr(time.indexOf('-') + 1);
+          const length = Date.parse('01/01/2013 ' + endtime) - Date.parse('01/01/2013 ' + starttime);
+          let min = length / 60000;
+          const hrs = Math.floor(min / 60);
+          min -= hrs * 60;
           const secObj = {
             title: dx['title='],
             crn: dx['crn='],
             crse: dx['crse='],
+            subj: dx['subj='],
             sec: dx['sec='],
             date: dx['date='],
             days: dx['days='],
@@ -125,12 +145,22 @@ export class HomeComponent implements OnInit {
             enddate: dx['enddate='],
             pdate: dx['date='],
             instructor: dx['instructor='],
+            instructorfirst: dx['instructor='].substr(0, dx['instructor='].indexOf(' ')),
+            instructorlast: dx['instructor='].substr(dx['instructor='].lastIndexOf(' ') + 1),
             plocation: dx['location='],
             time: dx['time='],
-            starttime: dx['time='].substr(0, dx['time='].indexOf('-')),
+            starttime: starttime,
+            endtime: endtime,
+            length: hrs + ' hr' + (hrs > 1 ? 's ' : ' ') + (min > 0 ? (min + ' min') : ''),
             preview: false
           };
+
+          // Set instructor data
+          this.setProf(secObj.instructor, secObj.instructorfirst, secObj.instructorlast);
+
+          // Push object to list of courses
           newSec.push(secObj);
+
           // Preview section
           const previewSec = {secObj}.secObj;
           previewSec.preview = true;
@@ -171,10 +201,39 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  // ------------------------- PROFESSORS --------------------------------------
+  setProf(name, first, last) {
+    console.log('[home component] setProf() name=', name);
+
+    if (this.prof_data.has(name)) {
+      return;
+    }
+
+    // Init with template object until object is fetched from db and built
+    this.prof_data.set(name, {overall: '', overall_v: 6, take_again: '', diff: '', tags: []});
+
+    // Get data, put in map
+    this.getfire.getProf(name, (d) => {
+      const profObj = {
+        name: name,
+        first: first,
+        last: last,
+        overall: d['overall'],
+        overall_v: (d['overall'] !== '-' ? parseFloat(d['overall']) : 6),
+        take_again: d['take_again'],
+        diff: d['diff'],
+        tags: d['tags']
+      };
+      this.prof_data.set(name, profObj);
+    });
+  }
+
+  /*
   @HostListener('document:mousedown', ['$event'])
   public documentClick(event: Event): void {
     console.log('[home component] mousedown event catcher');
     this.crseHighlight = null;
   }
+  */
 
 }

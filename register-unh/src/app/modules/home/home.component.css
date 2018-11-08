@@ -1,8 +1,12 @@
+
 .time-td {
   background-color: transparent;
   color: grey;
   font-size: 0.7em;
-  min-width: 80px;
+  min-width: 100px;
+}
+.time-td.highlight {
+  color: #2077ff;
 }
 .time-td:after {
   display: block;
@@ -12,13 +16,18 @@
   height: 1px;
   background-color: #EEE;
 }
+.time-td.highlight:after {
+  background-color: #2077ff;
+}
+table {
+  margin-bottom: 120px;
+}
 table th {
   text-align: center;
   border-color: white;
   border-width: 5px;
-  background-color: #6ca8f3;
-  color: white;
   font-weight: 100;
+  width: calc(20vw - 20px);
 }
 .bg-secondary * {
   color: white !important;
@@ -26,7 +35,62 @@ table th {
 
 .courseCard {
   background-color: white;
+  margin: 10px;
+  user-select: none;
+  cursor: pointer;
 }
+.courseCard.perm {
+}
+.courseCard .card-body {
+  padding: 0.5rem 1rem 0rem 1rem;
+}
+.courseCard .card-body .card-text {
+  text-align: center;
+}
+.courseCard .card-body .badge {
+  margin-left: 5px;
+}
+.courseCard .card-body .text-muted {
+  position: absolute;
+  display: block;
+  bottom: 30px;
+  margin-left: calc(50% - 48px);
+  font-size: 0.5em !important;
+}
+.courseCard .card-footer{
+  padding: 0;
+}
+.courseCard .card-footer .text-muted {
+  display: block;
+  font-size: 0.5em !important;
+}
+.courseCard .card-footer .text-muted:nth-child(1) {
+  float: left;
+}
+.courseCard .card-footer .text-muted:nth-child(2) {
+  float: right;
+}
+.courseCard .card-footer .prof-name {
+  margin: 0;
+  padding: 0.5rem 0 0.5rem 0.5rem;
+  float: left;
+}
+.courseCard .card-footer .prof-rating {
+}
+.courseCard .card-footer small {
+  padding: 0.5rem 0.5rem 0.5rem 0;
+  float: right;
+}
+/*
+.courseCard .card-body .material-icons {
+  margin-right: -21px;
+  margin-top: -21px;
+  visibility: hidden;
+}
+.courseCard.perm .card-body .material-icons {
+  visibility: visible;
+}
+*/
 
 .searchPreview {
   width: 100vw;
@@ -55,7 +119,7 @@ table th {
   font-size: 2em;
   font-weight: 100;
   box-shadow: 0 0 30px #CCC;
-  z-index: 10;
+  z-index: 14;
   transform: rotate(-90deg);
   transition: transform 300ms linear;
 }
@@ -66,6 +130,7 @@ form input {
   position: fixed;
   right: 110px;
   bottom: 80px;
+  z-index: 12;
 }
 #courseSearch {
   transition: margin 300ms, opacity 300ms;
@@ -81,6 +146,7 @@ form input {
   left: 0px;
   min-height: 50px;
   width: 100vw;
+  z-index: 11;
   transition: bottom 300ms, opacity 300ms;
 }
 .botbar.hidden {
@@ -88,9 +154,90 @@ form input {
   opacity: 0;
   pointer-events: none;
 }
+.botbar .nav-item {
+  margin: 0 20px;
+  min-width: 60px;
+}
 .botbar .nav-item small {
+  display: block;
   color: white !important;
-  margin-left: 3px;
-  margin-right: 20px;
+  margin-right: -10px;
+  margin-bottom: -5px;
   font-size: 0.6em;
+}
+.prof-popup {
+  position: fixed;
+  bottom: -2px;
+  left: -2px;
+  border: 1px solid lightgrey;
+  overflow: hidden;
+  height: 140px;
+  width: 800px;
+  padding: 0;
+  z-index: 10;
+}
+.prof-popup .portrait {
+  min-height: 150px;
+  min-width: 150px;
+  max-height: 150px;
+  max-width: 150px;
+  margin-right: 50px;
+  margin-left: 0;
+  margin: 0 40px -10px 0;
+  float: left;
+  content: "";
+  background-position: center;
+  background-size: cover;
+}
+.prof-popup h4 {
+  height: 100px;
+  line-height: 100px;
+  font-weight: 100;
+  margin-bottom: 20px;
+}
+.prof-popup h1 {
+  height: 100px;
+  line-height: 100px;
+  font-weight: 600;
+  margin-top: 40px;
+  margin-left: -80px;
+}
+.prof-popup .ratings {
+  display: block;
+  width: 130px;
+  padding: 0 5px;
+  float: left;
+  margin: 20px;
+}
+.prof-popup .overall {
+  width: auto;
+  height: auto;
+  line-height: 20px;
+  font-size: 3em;
+  margin: 5px;
+  padding: 15px 5px;
+  text-align: center;
+  float: left;
+}
+.prof-popup .difficulty, .prof-popup .take-again {
+  width: auto;
+  height: 30px;
+  line-height: 20px;
+  font-size: 1.2em;
+  margin: 5px;
+  padding: 5px;
+  text-align: center;
+  float: left;
+}
+.prof-popup .tags {
+  display: block;
+  max-width: 240px !important;
+  height: 120px;
+  margin: 10px;
+  float: right;
+}
+.prof-popup .prof-tag {
+  font-weight: 100;
+  font-size: 0.5em;
+  margin: 3px;
 }
